@@ -10,3 +10,19 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+# The VUE.js ignore fine
+.DS_Store
+client/node_modules/
+client/dist/
+client/npm-debug.log
+client/selenium-debug.log
+client/.idea
+client/package-lock.json
+client/.eslintrc.js
+client/.eslintignore
+
+# The go path ignore
+bin/
+src/
+pkg/
