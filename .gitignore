@@ -23,6 +23,6 @@ client/.eslintrc.js
 client/.eslintignore
 
 # The go path ignore
-bin/
-src/
-pkg/
+/bin/
+/src/
+/pkg/
