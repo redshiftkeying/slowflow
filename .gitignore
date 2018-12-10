@@ -4,6 +4,7 @@
 *.dll
 *.so
 *.dylib
+package-lock.json
 
 # Test binary, build with `go test -c`
 *.test
@@ -15,12 +16,17 @@
 .DS_Store
 client/node_modules/
 client/dist/
-client/npm-debug.log
-client/selenium-debug.log
+client/npm-debug.log*
+client/selenium-debug.log*
 client/.idea
 client/package-lock.json
 client/.eslintrc.js
 client/.eslintignore
+client/*.suo
+client/*.ntvs*
+client/*.njsproj
+client/*.sln
+client/test/unit/coverage/
 
 # The go path ignore
 /bin/
