@@ -5,6 +5,7 @@
 *.so
 *.dylib
 package-lock.json
+server/server
 
 # Test binary, build with `go test -c`
 *.test
