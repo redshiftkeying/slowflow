@@ -28,8 +28,3 @@ client/*.ntvs*
 client/*.njsproj
 client/*.sln
 client/test/unit/coverage/
-
-# The go path ignore
-/bin/
-/src/
-/pkg/

@@ -3,7 +3,6 @@ import (
 	"github.com/astaxie/beego/orm"
 	"log"
 	"strconv"
-    "fmt"
 )
 
 type Templet struct {
@@ -33,7 +32,6 @@ func GetTemplets() Templets {
 
 	result := Templets{}
 	for _, templet := range maps {
-        fmt.Println(templet)
 		id, _ := strconv.Atoi(templet["id"].(string))
 		data := Templet{
 			Id:   id,

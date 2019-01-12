@@ -7,5 +7,5 @@ import (
 
 func init() {
   beego.Router("/", &controllers.MainController{})
-	beego.Router("/temples", &controllers.TempletController{}, "Get:GetTemplets")
+	beego.Router("/templets", &controllers.TempletController{}, "Get:GetTemplets")
 }
