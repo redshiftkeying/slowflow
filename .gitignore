@@ -5,26 +5,24 @@
 *.so
 *.dylib
 package-lock.json
-server/server
+server
+slowflow
 
 # Test binary, build with `go test -c`
 *.test
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+.idea
+*.test
 
 # The VUE.js ignore fine
 .DS_Store
-client/node_modules/
-client/dist/
-client/npm-debug.log*
-client/selenium-debug.log*
-client/.idea
-client/package-lock.json
-client/.eslintrc.js
-client/.eslintignore
-client/*.suo
-client/*.ntvs*
-client/*.njsproj
-client/*.sln
-client/test/unit/coverage/
+
+# go config
+go.sum
+vendor/
+
+# Other
+.DS_Store
+
