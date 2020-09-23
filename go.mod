@@ -1,15 +1,29 @@
-module github.com/redshiftkeying/slowflow
+module github.com/redshiftkeying/slowflow-server
 
-go 1.12
-
-replace (
-	golang.org/x/crypto => github.com/golang/crypto v0.0.0-20180820150726-614d502a4dac
-	golang.org/x/net => github.com/golang/net v0.0.0-20180811021610-c39426892332
-	golang.org/x/sys => github.com/golang/sys v0.0.0-20180810173357-98c5dad5d1a0
-	golang.org/x/text => github.com/golang/text v0.3.0
-)
+go 1.14
 
 require (
-	github.com/gin-gonic/gin v1.4.0
-	github.com/graph-gophers/graphql-go v0.0.0-20190513003547-158e7b876106
+	github.com/LyricTian/retry v0.0.0-20171017083003-4f244cadd8eb
+	github.com/beevik/etree v1.1.0
+	github.com/facebookgo/ensure v0.0.0-20160127193407-b4ab57deab51 // indirect
+	github.com/facebookgo/inject v0.0.0-20180706035515-f23751cae28b
+	github.com/facebookgo/stack v0.0.0-20160209184415-751773369052 // indirect
+	github.com/facebookgo/structtag v0.0.0-20150214074306-217e25fb9691 // indirect
+	github.com/facebookgo/subset v0.0.0-20150612182917-8dac2c3c4870 // indirect
+	github.com/fatih/structs v1.1.0
+	github.com/go-gorp/gorp v2.2.0+incompatible // indirect
+	github.com/go-sql-driver/mysql v1.4.1
+	github.com/gofrs/uuid v3.3.0+incompatible
+	github.com/jmniu/workflow v1.0.4
+	github.com/lib/pq v1.3.0 // indirect
+	github.com/mattn/go-sqlite3 v2.0.2+incompatible // indirect
+	github.com/peterh/liner v1.1.0
+	github.com/pkg/errors v0.8.1
+	github.com/poy/onpar v0.0.0-20190519213022-ee068f8ea4d1 // indirect
+	github.com/qiniu/text v0.0.0-20190906154525-bf29e80e366e
+	github.com/satori/go.uuid v1.2.0
+	github.com/teambition/gear v1.17.1
+	github.com/visualfc/pkgwalk v1.0.0
+	github.com/ziutek/mymysql v1.5.4 // indirect
+	gopkg.in/gorp.v2 v2.2.0
 )
