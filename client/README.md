@@ -3,12 +3,11 @@
 ## 运行
 
 ```bash
-$ npm install
-$ npm start
+$ yarn dev
 ```
 
 ## 编译
 
 ```bash
-$ npm run build
+$ yarn build
 ```
