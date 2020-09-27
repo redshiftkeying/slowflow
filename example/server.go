@@ -6,10 +6,10 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gin-gonic/gin"
 	sw "github.com/redshiftkeying/slowflow-server"
+	"github.com/redshiftkeying/slowflow-server/engine"
 	"github.com/redshiftkeying/slowflow-server/service/db"
-
-	"github.com/teambition/gear"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -29,7 +29,7 @@ func init() {
 func main() {
 	flag.Parse()
 
-	sw.Init(
+	engine.Init(
 		db.SetDSN(dsn),
 		db.SetTrace(true),
 	)
@@ -40,13 +40,12 @@ func main() {
 		sw.ServerMiddlewareOption(filter),
 	}
 
-	http.Handle("/flow/", sw.StartServer(serverOptions...))
+	http.Handle("/flow/", sw.StartServer(engine.GetInstance(), serverOptions...))
 
 	log.Printf("服务运行在[%s]端口...", addr)
 	log.Fatalf("%v", http.ListenAndServe(addr, nil))
 }
 
-func filter(ctx *gear.Context) error {
-	fmt.Printf("请求参数：%s - %s \n", ctx.Path, ctx.Method)
-	return nil
+func filter(c *gin.Context) {
+	fmt.Printf("请求参数：%s \n", c.FullPath())
 }

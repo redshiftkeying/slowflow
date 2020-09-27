@@ -1,22 +1,17 @@
 package workflow
 
 import (
-	"fmt"
 	"net/http"
-	"os"
-	"path/filepath"
-	"regexp"
-	"strings"
 
-	"github.com/teambition/gear"
-	"github.com/teambition/gear/logging"
-	"github.com/teambition/gear/middleware/static"
+	"github.com/gin-gonic/gin"
+	"github.com/redshiftkeying/slowflow-server/api"
+	"github.com/redshiftkeying/slowflow-server/engine"
 )
 
 type serverOptions struct {
 	prefix      string
 	staticRoot  string
-	middlewares []gear.Middleware
+	middlewares []gin.HandlerFunc
 }
 
 // ServerOption 流程服务配置
@@ -37,7 +32,7 @@ func ServerStaticRootOption(staticRoot string) ServerOption {
 }
 
 // ServerMiddlewareOption 中间件
-func ServerMiddlewareOption(middlewares ...gear.Middleware) ServerOption {
+func ServerMiddlewareOption(middlewares ...gin.HandlerFunc) ServerOption {
 	return func(opts *serverOptions) {
 		opts.middlewares = middlewares
 	}
@@ -46,12 +41,12 @@ func ServerMiddlewareOption(middlewares ...gear.Middleware) ServerOption {
 // Server 流程管理服务
 type Server struct {
 	opts   serverOptions
-	engine *Engine
-	app    *gear.App
+	engine *engine.Engine
+	app    *gin.Engine
 }
 
 // Init 初始化
-func (a *Server) Init(engine *Engine, opts ...ServerOption) *Server {
+func (a *Server) Init(engine *engine.Engine, opts ...ServerOption) *Server {
 	a.engine = engine
 
 	var o serverOptions
@@ -64,20 +59,18 @@ func (a *Server) Init(engine *Engine, opts ...ServerOption) *Server {
 	}
 	a.opts = o
 
-	app := gear.New()
-
-	app.UseHandler(logging.Default())
+	app := gin.Default()
 
 	for _, m := range a.opts.middlewares {
 		app.Use(m)
 	}
 
 	if a.opts.staticRoot != "" {
-		app.Use(newStaticMiddleware(a))
+		app.Static("/", a.opts.staticRoot)
 	}
 
-	app.UseHandler(newRouterMiddleware(a))
 	a.app = app
+	newRouterMiddleware(a)
 
 	return a
 }
@@ -86,43 +79,23 @@ func (a *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	a.app.ServeHTTP(w, r)
 }
 
-// 静态文件中间件
-func newStaticMiddleware(srv *Server) gear.Middleware {
-	staticRoot, prefix := srv.opts.staticRoot, srv.opts.prefix
-	staticMiddleware := static.New(static.Options{
-		Root:        staticRoot,
-		Prefix:      prefix,
-		StripPrefix: true,
-	})
+func newRouterMiddleware(srv *Server) {
+	router := srv.app
+	// router := gear.NewRouter(gear.RouterOptions{
+	// 	Root:       fmt.Sprintf("%sapi", srv.opts.prefix),
+	// 	IgnoreCase: true,
+	// })
 
-	routerPrefix := regexp.MustCompile(`^(api)/.*`)
-	return func(ctx *gear.Context) error {
-		path := strings.TrimPrefix(ctx.Path, prefix)
-		if routerPrefix.MatchString(path) {
-			return nil
-		}
-
-		_, verr := os.Stat(filepath.Join(staticRoot, path))
-		if verr != nil && os.IsNotExist(verr) {
-			http.ServeFile(ctx.Res, ctx.Req, filepath.Join(staticRoot, "index.html"))
-			return nil
-		}
-
-		return staticMiddleware(ctx)
-	}
+	// restfull api
+	restAPI := new(api.RestAPI).Init(srv.engine)
+	router.GET("/flow/page", restAPI.QueryFlowPage)
+	router.GET("/flow/:id", restAPI.GetFlow)
+	router.DELETE("/flow/:id", restAPI.DeleteFlow)
+	router.POST("/flow", restAPI.SaveFlow)
 }
 
-func newRouterMiddleware(srv *Server) gear.Handler {
-	router := gear.NewRouter(gear.RouterOptions{
-		Root:       fmt.Sprintf("%sapi", srv.opts.prefix),
-		IgnoreCase: true,
-	})
-
-	api := new(API).Init(srv.engine)
-	router.Get("/flow/page", api.QueryFlowPage)
-	router.Get("/flow/:id", api.GetFlow)
-	router.Delete("/flow/:id", api.DeleteFlow)
-	router.Post("/flow", api.SaveFlow)
-
-	return router
+// StartServer 启动管理服务
+func StartServer(engine *engine.Engine, opts ...ServerOption) http.Handler {
+	srv := new(Server).Init(engine, opts...)
+	return srv
 }

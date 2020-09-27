@@ -1,4 +1,12 @@
-# slowflow
+func filter() func(c *gin.Context) {
+
+  return func(c *gin.Context) {
+
+​    fmt.Printf("请求参数：%s - %s \n", c.Path, c.Method)
+
+  }
+
+}slowflow
 
 根据github.com/antlinker/flow 修改
 
@@ -21,11 +29,12 @@ go get github.com/redshiftkeying/slowflow-server
 package main
 import (
     sw "github.com/redshiftkeying/slowflow-server/"
+    "github.com/redshiftkeying/slowflow-server/engine"
     "github.com/redshiftkeying/slowflow-server/service/db"
     _ "github.com/go-sql-driver/mysql"
 )
 func main() {
-    sw.Init(
+    engine.Init(
 		db.SetDSN("root:123456@tcp(127.0.0.1:3306)/flows?charset=utf8"),
 		db.SetTrace(true),
 	)
@@ -36,7 +45,7 @@ func main() {
 ### 2. 加载工作流文件
 
 ```go
-	err := workflow.LoadFile("leave.bpmn")
+	err := sw.LoadFile("leave.bpmn")
 	if err != nil {
 		// 处理错误
 	}
@@ -49,7 +58,7 @@ func main() {
 	"day": 1,
   }
 
-	result, err := workflow.StartFlow("流程编号", "开始节点编号", "流程发起人ID", input)
+	result, err := sw.StartFlow("流程编号", "开始节点编号", "流程发起人ID", input)
 	if err != nil {
 		// 处理错误
 	}
@@ -58,7 +67,7 @@ func main() {
 ### 4. 查询待办流程列表
 
 ```go
-	todos, err := workflow.QueryTodoFlows("流程编号", "流程待办人ID")
+	todos, err := sw.QueryTodoFlows("流程编号", "流程待办人ID")
 	if err != nil {
 		// 处理错误
 	}
@@ -71,7 +80,7 @@ func main() {
 	"action": "pass",
   }
 
-  result, err = workflow.HandleFlow("待办流程节点实例ID", "流程处理人ID", input)
+  result, err = sw.HandleFlow("待办流程节点实例ID", "流程处理人ID", input)
 	if err != nil {
 		// 处理错误
 	}
@@ -80,7 +89,7 @@ func main() {
 ### 6. 停止流程
 
 ```go
-	err := workflow.StopFlow("待办流程节点实例ID", func(flowInstance *schema.FlowInstance) bool {
+	err := sw.StopFlow("待办流程节点实例ID", func(flowInstance *schema.FlowInstance) bool {
 		return flowInstance.Launcher == "XXX"
 	})
 	if err != nil {
@@ -93,24 +102,23 @@ func main() {
 ```go
 func main() {
 serverOptions := []flow.ServerOption{
-	    workflow.ServerStaticRootOption("./build"),
-	    workflow.ServerPrefixOption("/flow/"),
-	    workflow.ServerMiddlewareOption(filter),
+	    sw.ServerStaticRootOption("./build"),
+	    sw.ServerPrefixOption("/flow/"),
+	    sw.ServerMiddlewareOption(filter),
 	}
 
-	http.Handle("/flow/", workflow.StartServer(serverOptions...))
+	http.Handle("/flow/", sw.StartServer(engine.GetInstance(), serverOptions...))
 }
 
-func filter(ctx *gear.Context) error {
-	fmt.Printf("请求参数：%s - %s \n", ctx.Path, ctx.Method)
-	return nil
+func filter(c *gin.Context) {
+    fmt.Printf("请求参数：%s \n", c.FullPath())
 }
 ```
 
 ### 8. 查询流程待办数据
 
 ```go
-	result,err := workflow.QueryTodoFlows("流程编号","流程处理人ID")
+	result,err := sw.QueryTodoFlows("流程编号","流程处理人ID")
 	if err != nil {
 		// 处理错误
 	}
@@ -119,7 +127,7 @@ func filter(ctx *gear.Context) error {
 ### 9. 查询流程历史数据
 
 ```go
-result,err := workflow.QueryFlowHistory("待办流程实例ID")
+result,err := sw.QueryFlowHistory("待办流程实例ID")
 if err != nil {
 	// 处理错误
 }
@@ -128,7 +136,7 @@ if err != nil {
 ### 10. 查询已办理的流程实例ID列表
 
 ```go
-ids,err := workflow.QueryDoneFlowIDs("流程编号","流程处理人ID")
+ids,err := sw.QueryDoneFlowIDs("流程编号","流程处理人ID")
 if err != nil {
 	// 处理错误
 }
@@ -137,7 +145,7 @@ if err != nil {
 ### 11. 查询节点实例的候选人ID列表
 
 ```go
-ids,err := workflow.QueryNodeCandidates("待办流程节点实例ID")
+ids,err := sw.QueryNodeCandidates("待办流程节点实例ID")
 if err != nil {
 	// 处理错误
 }
@@ -146,7 +154,7 @@ if err != nil {
 ### 12. 停止流程实例
 
 ```go
-	err := workflow.StopFlowInstance("待办流程节点实例ID", func(flowInstance *schema.FlowInstance) bool {
+	err := sw.StopFlowInstance("待办流程节点实例ID", func(flowInstance *schema.FlowInstance) bool {
 		return flowInstance.Launcher == "XXX"
 	})
 	if err != nil {
@@ -154,10 +162,10 @@ if err != nil {
 	}
 ```
 
-![流程管理](doc/screenshots/QQ20180123-175942@2x.png)
-![流程设计器](doc/screenshots/QQ20180123-180022@2x.png)
 
 ## TODO列表
+- [x] 移除ionic
+- [x] 使用GIN代替gear框架
 - [ ] 接入ORM支持多种数据库
 - [ ] 支持子流程
 - [ ] 重构并完善客户端

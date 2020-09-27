@@ -1,4 +1,4 @@
-package workflow_test
+package engine_test
 
 import (
 	"encoding/json"
@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/jmniu/workflow"
+	workflow "github.com/redshiftkeying/slowflow-server"
 	"github.com/redshiftkeying/slowflow-server/service/db"
 )
 

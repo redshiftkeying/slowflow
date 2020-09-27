@@ -1,4 +1,4 @@
-package workflow
+package engine
 
 import (
 	"context"
@@ -13,12 +13,12 @@ import (
 	"time"
 
 	"github.com/facebookgo/inject"
+	"github.com/pkg/errors"
 	"github.com/redshiftkeying/slowflow-server/bll"
 	"github.com/redshiftkeying/slowflow-server/register"
 	"github.com/redshiftkeying/slowflow-server/schema"
 	"github.com/redshiftkeying/slowflow-server/service/db"
 	"github.com/redshiftkeying/slowflow-server/util"
-	"github.com/pkg/errors"
 )
 
 // Logger 定义日志接口
@@ -641,6 +641,7 @@ func (e *Engine) QueryFlowHistory(flowInstanceID string) ([]*schema.FlowHistoryR
 	return e.flowBll.QueryHistory(flowInstanceID)
 }
 
+// QueryLastNodeInstance 查询流程最终节点实例
 func (e *Engine) QueryLastNodeInstance(flowInstanceID string) (*schema.NodeInstance, error) {
 	return e.flowBll.QueryLastNodeInstance(flowInstanceID)
 }

@@ -1,9 +1,8 @@
-package workflow
+package engine
 
 import (
 	"context"
 	"encoding/json"
-	"net/http"
 
 	"github.com/redshiftkeying/slowflow-server/expression/sql"
 	"github.com/redshiftkeying/slowflow-server/schema"
@@ -13,6 +12,11 @@ import (
 var (
 	engine *Engine
 )
+
+// GetInstance 获取流程实例
+func GetInstance() *Engine {
+	return engine
+}
 
 // Init 初始化流程配置
 func Init(opts ...db.Option) {
@@ -103,6 +107,7 @@ func QueryTodoFlows(flowCode, userID string) ([]*schema.FlowTodoResult, error) {
 	return engine.QueryTodoFlows(flowCode, userID)
 }
 
+// QueryLastNodeInstance 查询最终节点实例
 func QueryLastNodeInstance(flowInstanceID string) (*schema.NodeInstance, error) {
 	return engine.QueryLastNodeInstance(flowInstanceID)
 }
@@ -133,12 +138,6 @@ func QueryNodeCandidates(nodeInstanceID string) ([]string, error) {
 // GetNodeInstance 获取节点实例
 func GetNodeInstance(nodeInstanceID string) (*schema.NodeInstance, error) {
 	return engine.GetNodeInstance(nodeInstanceID)
-}
-
-// StartServer 启动管理服务
-func StartServer(opts ...ServerOption) http.Handler {
-	srv := new(Server).Init(engine, opts...)
-	return srv
 }
 
 // DefaultEngine 默认引擎
