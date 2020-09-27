@@ -66,7 +66,7 @@ func (a *Server) Init(engine *engine.Engine, opts ...ServerOption) *Server {
 	}
 
 	if a.opts.staticRoot != "" {
-		app.Static("/", a.opts.staticRoot)
+		app.Static("/flow", a.opts.staticRoot)
 	}
 
 	a.app = app
@@ -88,10 +88,10 @@ func newRouterMiddleware(srv *Server) {
 
 	// restfull api
 	restAPI := new(api.RestAPI).Init(srv.engine)
-	router.GET("/flow/page", restAPI.QueryFlowPage)
-	router.GET("/flow/:id", restAPI.GetFlow)
-	router.DELETE("/flow/:id", restAPI.DeleteFlow)
-	router.POST("/flow", restAPI.SaveFlow)
+	router.GET("/api/v1/flow", restAPI.QueryFlowPage)
+	router.GET("/api/v1/flow/:id", restAPI.GetFlow)
+	router.DELETE("/api/v1/flow/:id", restAPI.DeleteFlow)
+	router.POST("/api/v1/flow", restAPI.SaveFlow)
 }
 
 // StartServer 启动管理服务
