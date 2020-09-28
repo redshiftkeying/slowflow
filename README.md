@@ -1,12 +1,4 @@
-func filter() func(c *gin.Context) {
-
-  return func(c *gin.Context) {
-
-​    fmt.Printf("请求参数：%s - %s \n", c.Path, c.Method)
-
-  }
-
-}slowflow
+# Slowflow
 
 根据github.com/antlinker/flow 修改
 
@@ -171,6 +163,5 @@ if err != nil {
 - [ ] 重构并完善客户端
 - [ ] 新增APP客户端
 - [ ] 增加丰富的例子
-- [ ] 增加安装文档
 - [ ] 完善BPMN2.0的支持和实现
 
