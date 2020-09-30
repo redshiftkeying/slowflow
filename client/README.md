@@ -3,6 +3,7 @@
 ## 运行
 
 ```bash
+$ yarn install
 $ yarn dev
 ```
 
