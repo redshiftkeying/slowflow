@@ -1,101 +1,94 @@
 package workflow
 
 import (
-	"net/http"
+	"log"
 
 	"github.com/gin-gonic/gin"
 	"github.com/redshiftkeying/slowflow-server/api"
 	"github.com/redshiftkeying/slowflow-server/engine"
+	"github.com/redshiftkeying/slowflow-server/service/db"
+	"github.com/spf13/viper"
 )
 
-type serverOptions struct {
-	prefix      string
-	staticRoot  string
-	middlewares []gin.HandlerFunc
-}
-
-// ServerOption 流程服务配置
-type ServerOption func(*serverOptions)
-
-// ServerPrefixOption 访问前缀
-func ServerPrefixOption(prefix string) ServerOption {
-	return func(opts *serverOptions) {
-		opts.prefix = prefix
+// AddServerMiddleware 中间件
+func (a *Server) AddServerMiddleware(middlewares ...gin.HandlerFunc) {
+	for _, m := range middlewares {
+		a.app.Use(m)
 	}
 }
 
-// ServerStaticRootOption 静态文件目录
-func ServerStaticRootOption(staticRoot string) ServerOption {
-	return func(opts *serverOptions) {
-		opts.staticRoot = staticRoot
+// StartServer 启动管理服务
+func (a *Server) StartServer() {
+	port := viper.GetString("port")
+	if port == "" {
+		port = "6062"
 	}
-}
-
-// ServerMiddlewareOption 中间件
-func ServerMiddlewareOption(middlewares ...gin.HandlerFunc) ServerOption {
-	return func(opts *serverOptions) {
-		opts.middlewares = middlewares
-	}
+	a.app.Run(":" + port)
 }
 
 // Server 流程管理服务
 type Server struct {
-	opts   serverOptions
 	engine *engine.Engine
 	app    *gin.Engine
 }
 
 // Init 初始化
-func (a *Server) Init(engine *engine.Engine, opts ...ServerOption) *Server {
-	a.engine = engine
+func Init() *Server {
+	a := new(Server)
+	// init engine
+	dsn := viper.GetString("dsn")
+	a.engine = engine.Init(db.SetDSN(dsn), db.SetTrace(true))
 
-	var o serverOptions
-	for _, opt := range opts {
-		opt(&o)
+	// debug ? debug:release
+	if viper.GetString("mode") == "release" {
+		gin.SetMode(gin.ReleaseMode)
 	}
-
-	if o.prefix == "" {
-		o.prefix = "/"
-	}
-	a.opts = o
-
-	app := gin.Default()
-
-	for _, m := range a.opts.middlewares {
-		app.Use(m)
-	}
-
-	if a.opts.staticRoot != "" {
-		app.Static("/flow", a.opts.staticRoot)
-	}
-
-	a.app = app
-	newRouterMiddleware(a)
-
+	a.app = gin.Default()
+	// set routers
+	setStatic(a)
+	setAPI(a)
 	return a
 }
 
-func (a *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	a.app.ServeHTTP(w, r)
+func setStatic(a *Server) {
+	staticRoot := viper.GetString("static.root")
+	staticPath := viper.GetString("static.path")
+	if staticRoot != "" {
+		if staticPath != "" {
+			a.app.Static(staticPath, staticRoot)
+		}
+	}
 }
 
-func newRouterMiddleware(srv *Server) {
-	router := srv.app
-	// router := gear.NewRouter(gear.RouterOptions{
-	// 	Root:       fmt.Sprintf("%sapi", srv.opts.prefix),
-	// 	IgnoreCase: true,
-	// })
-
-	// restfull api
-	restAPI := new(api.RestAPI).Init(srv.engine)
-	router.GET("/api/v1/flow", restAPI.QueryFlowPage)
-	router.GET("/api/v1/flow/:id", restAPI.GetFlow)
-	router.DELETE("/api/v1/flow/:id", restAPI.DeleteFlow)
-	router.POST("/api/v1/flow", restAPI.SaveFlow)
-}
-
-// StartServer 启动管理服务
-func StartServer(engine *engine.Engine, opts ...ServerOption) http.Handler {
-	srv := new(Server).Init(engine, opts...)
-	return srv
+func setAPI(a *Server) {
+	// rest api config
+	restConfig := viper.Sub("api.rest")
+	if restConfig != nil {
+		var rests []api.RestConfig
+		err := restConfig.Unmarshal(&rests)
+		if err != nil {
+			log.Printf("unable to decode into struct, %v \n", err)
+			return
+		}
+	}
+	// graphql api config
+	graphqlConfig := viper.Sub("api.graphql")
+	if graphqlConfig != nil {
+		var graphqls []api.GraphqlConfig
+		err := restConfig.Unmarshal(&graphqls)
+		if err != nil {
+			log.Printf("unable to decode into struct, %v \n", err)
+			return
+		}
+	}
+	// protobuf api config
+	protobufConfig := viper.Sub("api.protobuf")
+	if protobufConfig != nil {
+		var protobufs []api.ProtobufConfig
+		err := restConfig.Unmarshal(&protobufs)
+		if err != nil {
+			log.Printf("unable to decode into struct, %v \n", err)
+			return
+		}
+	}
 }

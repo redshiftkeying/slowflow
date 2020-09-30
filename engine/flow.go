@@ -19,7 +19,7 @@ func GetInstance() *Engine {
 }
 
 // Init 初始化流程配置
-func Init(opts ...db.Option) {
+func Init(opts ...db.Option) *Engine {
 	db, trace, err := db.NewMySQL(opts...)
 	if err != nil {
 		panic(err)
@@ -31,6 +31,7 @@ func Init(opts ...db.Option) {
 	}
 	engine = e
 	sql.Reg(db)
+	return e
 }
 
 // SetParser 设定解析器
