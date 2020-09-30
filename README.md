@@ -17,21 +17,55 @@ go get github.com/redshiftkeying/slowflow-server
 
 ### 1. 初始化工作流引擎
 
+#### 默认配置
+
 ```go
 package main
 import (
     sw "github.com/redshiftkeying/slowflow-server/"
-    "github.com/redshiftkeying/slowflow-server/engine"
-    "github.com/redshiftkeying/slowflow-server/service/db"
     _ "github.com/go-sql-driver/mysql"
 )
 func main() {
-    engine.Init(
-		db.SetDSN("root:123456@tcp(127.0.0.1:3306)/flows?charset=utf8"),
-		db.SetTrace(true),
-	)
+   	//use default configs
+	sw.SetServerOptions("")
+	// Instance
+	s := sw.Init()
+	// add Middleware
+	s.AddServerMiddleware(filter)
+	// start server
+    s.StartServer()
 }
+```
 
+#### 使用配置文件
+
+```go
+package main
+import (
+    sw "github.com/redshiftkeying/slowflow-server/"
+    _ "github.com/go-sql-driver/mysql"
+)
+func main() {
+   	//use default configs
+	sw.SetServerOptions("./config.yml")
+	// Instance
+	s := sw.Init()
+	// add Middleware
+	s.AddServerMiddleware(filter)
+	// start server
+    s.StartServer()
+}
+```
+
+配置文件样例：
+
+```yaml
+# config.yml
+dsn: root:123456@tcp(127.0.0.1:3306)/sflow?charset=utf8
+mode: debug
+staticroot: ./build
+staticPath: /
+port: 6062
 ```
 
 ### 2. 加载工作流文件

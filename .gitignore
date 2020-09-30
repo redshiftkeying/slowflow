@@ -16,13 +16,22 @@ slowflow
 .idea
 *.test
 
-# The VUE.js ignore fine
-.DS_Store
-
 # go config
 go.sum
+
+# Dependency directories (remove the comment below to include it)
 vendor/
 
-# Other
-.DS_Store
 
+# misc
+.DS_Store
+db/
+
+# Client dist
+dist/
+upload/
+build/
+out/
+
+# config Generated
+sflow.yaml

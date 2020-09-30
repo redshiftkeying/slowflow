@@ -1,8 +1,9 @@
 module github.com/redshiftkeying/slowflow-server
 
-go 1.14
+go 1.15
 
 require (
+	github.com/99designs/gqlgen v0.13.0
 	github.com/LyricTian/retry v0.0.0-20171017083003-4f244cadd8eb
 	github.com/beevik/etree v1.1.0
 	github.com/facebookgo/ensure v0.0.0-20160127193407-b4ab57deab51 // indirect
@@ -27,12 +28,13 @@ require (
 	github.com/pkg/errors v0.8.1
 	github.com/poy/onpar v0.0.0-20190519213022-ee068f8ea4d1 // indirect
 	github.com/qiniu/text v0.0.0-20190906154525-bf29e80e366e
+	github.com/spf13/viper v1.7.1
 	github.com/ugorji/go v1.1.8 // indirect
+	github.com/vektah/gqlparser/v2 v2.1.0
 	github.com/visualfc/pkgwalk v1.0.0
 	github.com/ziutek/mymysql v1.5.4 // indirect
 	golang.org/x/sys v0.0.0-20200923182605-d9f96fdee20d // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
-	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 	gopkg.in/gorp.v2 v2.2.0
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 )
