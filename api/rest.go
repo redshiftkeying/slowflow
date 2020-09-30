@@ -10,15 +10,34 @@ import (
 	"github.com/redshiftkeying/slowflow-server/schema"
 )
 
+// Method API支持的方法
+type Method string
+
+const (
+	MethodGET     Method = "GET"
+	MethodPUT     Method = "PUT"
+	MethodPOST    Method = "POST"
+	MethodDELETE  Method = "DELETE"
+	MethodPATCH   Method = "PATCH"
+	MethodOPTIONS Method = "OPTIONS"
+	MethodHEAD    Method = "HEAD"
+)
+
+// RestConfig 配置
+type RestConfig struct {
+	Method  Method
+	Path    string
+	Handler gin.HandlerFunc
+}
+
+// 	router.GET("/api/v1/flow", restAPI.QueryFlowPage)
+// 	router.GET("/api/v1/flow/:id", restAPI.GetFlow)
+// 	router.DELETE("/api/v1/flow/:id", restAPI.DeleteFlow)
+// 	router.POST("/api/v1/flow", restAPI.SaveFlow)
+
 // RestAPI 提供API管理
 type RestAPI struct {
 	engine *engine.Engine
-}
-
-// Init 初始化
-func (a *RestAPI) Init(engine *engine.Engine) *RestAPI {
-	a.engine = engine
-	return a
 }
 
 // 获取分页的页索引
