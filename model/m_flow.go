@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/pkg/errors"
 	"github.com/redshiftkeying/slowflow-server/schema"
 	"github.com/redshiftkeying/slowflow-server/service/db"
-	"github.com/pkg/errors"
 )
 
 // Flow 流程管理
@@ -366,7 +366,7 @@ func (a *Flow) QueryTodo(typeCode, flowCode, userID string, count int) ([]*schem
 	return items, nil
 }
 
-// QueryTodoPage 分页查询用户的待办数据
+// QueryTodoPaginate 分页查询用户的待办数据
 func (a *Flow) QueryTodoPaginate(typeCode, flowCode, userID string, page int, pageSize int) (int, []*schema.FlowTodoResult, error) {
 	var args []interface{}
 	query := fmt.Sprintf(`
@@ -956,6 +956,51 @@ func (a *Flow) QueryLastNodeInstance(flowInstanceID string) (*schema.NodeInstanc
 }
 
 // -----------------------------web查询操作(start)-------------------------------
+
+// QueryAllFlow 查询流程数据-不分页
+func (a *Flow) QueryAllFlow(params schema.FlowQueryParam) (int64, []*schema.FlowQueryResult, error) {
+	var (
+		where = "WHERE deleted=0 AND flag=1"
+		args  []interface{}
+	)
+
+	if code := params.Code; code != "" {
+		where = fmt.Sprintf("%s AND code LIKE ?", where)
+		args = append(args, "%"+code+"%")
+	}
+
+	if name := params.Name; name != "" {
+		where = fmt.Sprintf("%s AND name LIKE ?", where)
+		args = append(args, "%"+name+"%")
+	}
+
+	if v := params.TypeCode; v != "" {
+		where = fmt.Sprintf("%s AND type_code=?", where)
+		args = append(args, v)
+	}
+
+	if v := params.Status; v > 0 {
+		where = fmt.Sprintf("%s AND status=?", where)
+		args = append(args, v)
+	}
+
+	n, err := a.DB.SelectInt(fmt.Sprintf("SELECT count(*) FROM %s %s", schema.FlowTableName, where), args...)
+	if err != nil {
+		return 0, nil, errors.Wrapf(err, "查询分页数据发生错误")
+	} else if n == 0 {
+		return 0, nil, nil
+	}
+
+	query := fmt.Sprintf("SELECT id,record_id,created,code,name,version FROM %s %s ORDER BY id DESC", schema.FlowTableName, where)
+
+	var items []*schema.FlowQueryResult
+	_, err = a.DB.Select(&items, query, args...)
+	if err != nil {
+		return 0, nil, errors.Wrapf(err, "查询分页数据发生错误")
+	}
+
+	return n, items, err
+}
 
 // QueryAllFlowPage 查询流程分页数据
 func (a *Flow) QueryAllFlowPage(params schema.FlowQueryParam, pageIndex, pageSize uint) (int64, []*schema.FlowQueryResult, error) {
