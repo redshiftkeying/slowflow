@@ -32,7 +32,7 @@ type Server struct {
 	app    *gin.Engine
 }
 
-// Init 初始化
+// Init 初始化服务，提供接口调用
 func Init() *Server {
 	a := new(Server)
 	// init engine
@@ -48,6 +48,14 @@ func Init() *Server {
 	setStatic(a)
 	setAPI(a)
 	return a
+}
+
+// InitEngine 仅初始化引擎，提供代码调用
+func InitEngine() *engine.Engine {
+	// init engine
+	dsn := viper.GetString("dsn")
+	e := engine.Init(db.SetDSN(dsn), db.SetTrace(true))
+	return e
 }
 
 func setStatic(a *Server) {
@@ -75,7 +83,7 @@ func setAPI(a *Server) {
 	graphqlConfig := viper.Sub("api.graphql")
 	if graphqlConfig != nil {
 		var graphqls []api.GraphqlConfig
-		err := restConfig.Unmarshal(&graphqls)
+		err := graphqlConfig.Unmarshal(&graphqls)
 		if err != nil {
 			log.Printf("unable to decode into struct, %v \n", err)
 			return
@@ -85,7 +93,7 @@ func setAPI(a *Server) {
 	protobufConfig := viper.Sub("api.protobuf")
 	if protobufConfig != nil {
 		var protobufs []api.ProtobufConfig
-		err := restConfig.Unmarshal(&protobufs)
+		err := protobufConfig.Unmarshal(&protobufs)
 		if err != nil {
 			log.Printf("unable to decode into struct, %v \n", err)
 			return
