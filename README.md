@@ -1,10 +1,10 @@
 # Slowflow
 
-根据github.com/antlinker/flow 修改
+根据 github.com/antlinker/flow 修改
 
 ## 工作流设计器
 
-- [Camunda下载地址](https://camunda.com/download/modeler/)
+- [Camunda 下载地址](https://camunda.com/download/modeler/)
 - [文档参考](https://docs.awspaas.com/reference-guide/aws-paas-process-reference-guide/process_structure/activities.html)
 
 ## 获取项目
@@ -28,7 +28,7 @@ func main() {
    	//use default configs
 	sw.SetServerOptions("")
 	// Instance
-    e := sw.InitEngine()
+	e := sw.InitEngine()
 }
 ```
 
@@ -112,7 +112,7 @@ if err != nil {
 }
 ```
 
-### 9. 查询已办理的流程实例ID列表
+### 9. 查询已办理的流程实例 ID 列表
 
 ```go
 ids,err := e.QueryDoneFlowIDs("流程编号","流程处理人ID")
@@ -121,7 +121,7 @@ if err != nil {
 }
 ```
 
-### 10. 查询节点实例的候选人ID列表
+### 10. 查询节点实例的候选人 ID 列表
 
 ```go
 ids,err := e.QueryNodeCandidates("待办流程节点实例ID")
@@ -140,8 +140,6 @@ if err != nil {
 		// 处理错误
 	}
 ```
-
-
 
 ## 使用接口
 
@@ -202,16 +200,15 @@ staticPath: /
 port: 6062
 ```
 
+## TODO 列表
 
-## TODO列表
-- [x] 移除ionic
-- [x] 使用GIN代替gear框架
-- [ ] 移除qlang的部分
-- [ ] 接入ORM支持多种数据库
+- [x] 移除 ionic
+- [x] 使用 GIN 代替 gear 框架
+- [ ] 移除 qlang 的部分
+- [ ] 接入 ORM 支持多种数据库
 - [ ] 支持子流程
 - [ ] 重构并完善客户端
-- [ ] 新增APP客户端
+- [ ] 新增 APP 客户端
 - [ ] 增加丰富的例子
-- [ ] 完善BPMN2.0的支持和实现
-- [ ] 打包Docker
-
+- [ ] 完善 BPMN2.0 的支持和实现
+- [ ] 打包 Docker

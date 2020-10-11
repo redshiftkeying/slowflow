@@ -376,7 +376,7 @@ func (a *Flow) QueryTodoPaginate(typeCode, flowCode, userID string, page int, pa
 		  LEFT JOIN %s f ON n.form_id = f.record_id AND f.deleted = n.deleted
 			LEFT JOIN %s fw ON n.flow_id = fw.record_id AND fw.deleted=n.deleted
 		WHERE ni.deleted = 0 AND ni.status = 1 AND fi.status = 1 AND ni.record_id IN (SELECT node_instance_id FROM %s WHERE deleted = 0 AND candidate_id = ?)
-		`, schema.NodeInstanceTableName, schema.FlowInstanceTableName, schema.NodeTableName, schema.FormTableName, schema.FlowTableName, schema.NodeCandidateTableName)
+		`, "*", schema.NodeInstanceTableName, schema.FlowInstanceTableName, schema.NodeTableName, schema.FormTableName, schema.FlowTableName, schema.NodeCandidateTableName)
 
 	args = append(args, userID)
 	if typeCode != "" {

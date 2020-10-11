@@ -264,6 +264,11 @@ func (a *Flow) QueryAllFlowPage(params schema.FlowQueryParam, pageIndex, pageSiz
 	return a.FlowModel.QueryAllFlowPage(params, pageIndex, pageSize)
 }
 
+// QueryAllFlow 查询流程数据(不分页)
+func (a *Flow) QueryAllFlow(params schema.FlowQueryParam) (int64, []*schema.FlowQueryResult, error) {
+	return a.FlowModel.QueryAllFlow(params)
+}
+
 // DeleteFlow 删除流程
 func (a *Flow) DeleteFlow(flowID string) error {
 	return a.FlowModel.DeleteFlow(flowID)
