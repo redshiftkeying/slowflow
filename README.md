@@ -94,16 +94,7 @@ dsn: root:123456@tcp(127.0.0.1:3306)/sflow?charset=utf8
 	}
 ```
 
-### 7. 查询流程待办数据
-
-```go
-	result,err := e.QueryTodoFlows("流程编号","流程处理人ID")
-	if err != nil {
-		// 处理错误
-	}
-```
-
-### 8. 查询流程历史数据
+### 7. 查询流程历史数据
 
 ```go
 result,err := e.QueryFlowHistory("待办流程实例ID")
@@ -112,7 +103,7 @@ if err != nil {
 }
 ```
 
-### 9. 查询已办理的流程实例 ID 列表
+### 8. 查询已办理的流程实例 ID 列表
 
 ```go
 ids,err := e.QueryDoneFlowIDs("流程编号","流程处理人ID")
@@ -121,7 +112,7 @@ if err != nil {
 }
 ```
 
-### 10. 查询节点实例的候选人 ID 列表
+### 9. 查询节点实例的候选人 ID 列表
 
 ```go
 ids,err := e.QueryNodeCandidates("待办流程节点实例ID")
@@ -130,7 +121,7 @@ if err != nil {
 }
 ```
 
-### 11. 停止流程实例
+### 10. 停止流程实例
 
 ```go
 	err := e.StopFlowInstance("待办流程节点实例ID", func(flowInstance *schema.FlowInstance) bool {
