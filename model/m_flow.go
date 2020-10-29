@@ -1002,6 +1002,28 @@ func (a *Flow) QueryAllFlow(params schema.FlowQueryParam) (int64, []*schema.Flow
 	return n, items, err
 }
 
+// QueryAllAvailableFlow 查询流程数据-不区分版本(取得最新版本)
+func (a *Flow) QueryAllAvailableFlow() (int64, []*schema.FlowQueryResult, error) {
+
+	n, err := a.DB.SelectInt(fmt.Sprintf("SELECT count(*) FROM %s ", schema.FlowTableName))
+	if err != nil {
+		return 0, nil, errors.Wrapf(err, "查询数据发生错误")
+	} else if n == 0 {
+		return 0, nil, nil
+	}
+
+	// query := fmt.Sprintf("SELECT id,record_id,created,code,name,version FROM %s %s ORDER BY id DESC", schema.FlowTableName, where)
+	query := fmt.Sprintf("SELECT a.id,a.record_id,a.created,a.code,a.name,a.version FROM %s a where version = (select max(version) from %s where code = a.code) ORDER BY a.code DESC", schema.FlowTableName, schema.FlowTableName)
+
+	var items []*schema.FlowQueryResult
+	_, err = a.DB.Select(&items, query)
+	if err != nil {
+		return 0, nil, errors.Wrapf(err, "查询数据发生错误")
+	}
+
+	return n, items, err
+}
+
 // QueryAllFlowPage 查询流程分页数据
 func (a *Flow) QueryAllFlowPage(params schema.FlowQueryParam, pageIndex, pageSize uint) (int64, []*schema.FlowQueryResult, error) {
 	var (

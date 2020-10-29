@@ -269,6 +269,11 @@ func (a *Flow) QueryAllFlow(params schema.FlowQueryParam) (int64, []*schema.Flow
 	return a.FlowModel.QueryAllFlow(params)
 }
 
+// QueryAllAvailableFlow 查询流程数据版本最新
+func (a *Flow) QueryAllAvailableFlow() (int64, []*schema.FlowQueryResult, error) {
+	return a.FlowModel.QueryAllAvailableFlow()
+}
+
 // DeleteFlow 删除流程
 func (a *Flow) DeleteFlow(flowID string) error {
 	return a.FlowModel.DeleteFlow(flowID)
