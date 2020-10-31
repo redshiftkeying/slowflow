@@ -1,5 +1,7 @@
 package schema
 
+import "github.com/redshiftkeying/slowflow-server/service/db"
+
 // 定义表名
 const (
 	FlowTableName            = "f_flow"
@@ -17,6 +19,24 @@ const (
 	FieldPropertyTableName   = "f_field_property"
 	FieldValidationTableName = "f_field_validation"
 )
+
+// FlowDBMap 注册流程相关的数据库映射
+func FlowDBMap(db *db.DB) {
+	db.AddTableWithName(Flow{}, FlowTableName)
+	db.AddTableWithName(Node{}, NodeTableName)
+	db.AddTableWithName(NodeRouter{}, NodeRouterTableName)
+	db.AddTableWithName(NodeAssignment{}, NodeAssignmentTableName)
+	db.AddTableWithName(FlowInstance{}, FlowInstanceTableName)
+	db.AddTableWithName(NodeInstance{}, NodeInstanceTableName)
+	db.AddTableWithName(NodeTiming{}, NodeTimingTableName)
+	db.AddTableWithName(NodeCandidate{}, NodeCandidateTableName)
+	db.AddTableWithName(Form{}, FormTableName)
+	db.AddTableWithName(FormField{}, FormFieldTableName)
+	db.AddTableWithName(FieldOption{}, FieldOptionTableName)
+	db.AddTableWithName(FieldProperty{}, FieldPropertyTableName)
+	db.AddTableWithName(FieldValidation{}, FieldValidationTableName)
+	db.AddTableWithName(NodeProperty{}, NodePropertyTableName)
+}
 
 // Flow 流程
 type Flow struct {

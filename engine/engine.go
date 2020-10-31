@@ -15,7 +15,6 @@ import (
 	"github.com/facebookgo/inject"
 	"github.com/pkg/errors"
 	"github.com/redshiftkeying/slowflow-server/bll"
-	"github.com/redshiftkeying/slowflow-server/register"
 	"github.com/redshiftkeying/slowflow-server/schema"
 	"github.com/redshiftkeying/slowflow-server/service/db"
 	"github.com/redshiftkeying/slowflow-server/util"
@@ -62,7 +61,7 @@ func (e *Engine) Init(parser Parser, execer Execer, sqlDB *sql.DB, trace bool) (
 		return e, err
 	}
 
-	register.FlowDBMap(db)
+	schema.FlowDBMap(db)
 	err = db.CreateTablesIfNotExists()
 	if err != nil {
 		return e, err

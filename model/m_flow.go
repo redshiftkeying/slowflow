@@ -1013,7 +1013,7 @@ func (a *Flow) QueryAllAvailableFlow() (int64, []*schema.FlowQueryResult, error)
 	}
 
 	// query := fmt.Sprintf("SELECT id,record_id,created,code,name,version FROM %s %s ORDER BY id DESC", schema.FlowTableName, where)
-	query := fmt.Sprintf("SELECT a.id,a.record_id,a.created,a.code,a.name,a.version FROM %s a where version = (select max(version) from %s where code = a.code) ORDER BY a.code DESC", schema.FlowTableName, schema.FlowTableName)
+	query := fmt.Sprintf("SELECT a.id,a.record_id,a.created,a.code,a.name,a.version FROM %s a where version = (select max(version) from %s where code = a.code) AND a.deleted = 0 ORDER BY a.created DESC", schema.FlowTableName, schema.FlowTableName)
 
 	var items []*schema.FlowQueryResult
 	_, err = a.DB.Select(&items, query)
