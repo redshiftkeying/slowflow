@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "allowJs": true,
+    "removeComments": true,
     "alwaysStrict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
